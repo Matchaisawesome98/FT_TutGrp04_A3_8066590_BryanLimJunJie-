@@ -180,7 +180,7 @@ public:
         return coords;
     }
 
-    // Duplicate removal function
+    // Remove Duplicates
     void removeDuplicates() {
         // Remove duplicates from Point2D
         sort(allPoints2D.begin(), allPoints2D.end(),
@@ -208,6 +208,50 @@ public:
                 return a->getX() == b->getX() && a->getY() == b->getY() && a->getZ() == b->getZ();
             });
         allPoints3D.erase(newEnd3D, allPoints3D.end());
+
+        // Remove duplicates from Line2D
+        sort(allLines2D.begin(), allLines2D.end(),
+            [](const unique_ptr<Line2D>& a, const unique_ptr<Line2D>& b) {
+                // Compare Point1 first
+                if (a->getPt1().getX() != b->getPt1().getX()) return a->getPt1().getX() < b->getPt1().getX();
+                if (a->getPt1().getY() != b->getPt1().getY()) return a->getPt1().getY() < b->getPt1().getY();
+                // If Point1 is equal, compare Point2
+                if (a->getPt2().getX() != b->getPt2().getX()) return a->getPt2().getX() < b->getPt2().getX();
+                return a->getPt2().getY() < b->getPt2().getY();
+            });
+
+        auto newEndLine2D = unique(allLines2D.begin(), allLines2D.end(),
+            [](const unique_ptr<Line2D>& a, const unique_ptr<Line2D>& b) {
+                return (a->getPt1().getX() == b->getPt1().getX() &&
+                        a->getPt1().getY() == b->getPt1().getY() &&
+                        a->getPt2().getX() == b->getPt2().getX() &&
+                        a->getPt2().getY() == b->getPt2().getY());
+            });
+        allLines2D.erase(newEndLine2D, allLines2D.end());
+
+        // Remove duplicates from Line3D
+        sort(allLines3D.begin(), allLines3D.end(),
+            [](const unique_ptr<Line3D>& a, const unique_ptr<Line3D>& b) {
+                // Compare Point1 first
+                if (a->getPt1().getX() != b->getPt1().getX()) return a->getPt1().getX() < b->getPt1().getX();
+                if (a->getPt1().getY() != b->getPt1().getY()) return a->getPt1().getY() < b->getPt1().getY();
+                if (a->getPt1().getZ() != b->getPt1().getZ()) return a->getPt1().getZ() < b->getPt1().getZ();
+                // If Point1 is equal, compare Point2
+                if (a->getPt2().getX() != b->getPt2().getX()) return a->getPt2().getX() < b->getPt2().getX();
+                if (a->getPt2().getY() != b->getPt2().getY()) return a->getPt2().getY() < b->getPt2().getY();
+                return a->getPt2().getZ() < b->getPt2().getZ();
+            });
+
+        auto newEndLine3D = unique(allLines3D.begin(), allLines3D.end(),
+            [](const unique_ptr<Line3D>& a, const unique_ptr<Line3D>& b) {
+                return (a->getPt1().getX() == b->getPt1().getX() &&
+                        a->getPt1().getY() == b->getPt1().getY() &&
+                        a->getPt1().getZ() == b->getPt1().getZ() &&
+                        a->getPt2().getX() == b->getPt2().getX() &&
+                        a->getPt2().getY() == b->getPt2().getY() &&
+                        a->getPt2().getZ() == b->getPt2().getZ());
+            });
+        allLines3D.erase(newEndLine3D, allLines3D.end());
     }
 
     void setFilteringCriteria() {
@@ -505,51 +549,53 @@ void viewData() {
     }
 
     void sortLine2DData(vector<Line2D*>& lines) {
-        if (currentSortCriteria == "Pt. 1") {
-            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-                // Sort by Pt1's X coordinate first, then Y coordinate
-                if (a->getPt1().getX() != b->getPt1().getX()) {
-                    return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
-                                                    : a->getPt1().getX() > b->getPt1().getX();
-                }
-                return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
-                                                : a->getPt1().getY() > b->getPt1().getY();
-            });
-        }
-        else if (currentSortCriteria == "Pt. 2") {
-            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-                // Sort by Pt2's X coordinate first, then Y coordinate
-                if (a->getPt2().getX() != b->getPt2().getX()) {
-                    return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
-                                                    : a->getPt2().getX() > b->getPt2().getX();
-                }
-                return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
-                                                : a->getPt2().getY() > b->getPt2().getY();
-            });
-        }
-        else if (currentSortCriteria == "Length") {
-            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
-                                                : a->getScalarValue() > b->getScalarValue();
-            });
-        }
+    if (currentSortCriteria == "Pt. 1") {
+        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+            // Compare Point1 lexicographically: X first, then Y
+            if (a->getPt1().getX() != b->getPt1().getX()) {
+                return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
+                                                : a->getPt1().getX() > b->getPt1().getX();
+            }
+            // If X coordinates are equal, compare Y coordinates
+            return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
+                                            : a->getPt1().getY() > b->getPt1().getY();
+        });
     }
+    else if (currentSortCriteria == "Pt. 2") {
+        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+            // Compare Point2 lexicographically: X first, then Y
+            if (a->getPt2().getX() != b->getPt2().getX()) {
+                return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
+                                                : a->getPt2().getX() > b->getPt2().getX();
+            }
+            return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
+                                            : a->getPt2().getY() > b->getPt2().getY();
+        });
+    }
+    else if (currentSortCriteria == "Length") {
+        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+            return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
+                                            : a->getScalarValue() > b->getScalarValue();
+        });
+    }
+}
 
     void sortLine3DData(vector<Line3D*>& lines) {
         if (currentSortCriteria == "Pt. 1") {
             sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
-                // Sort by Pt1's X coordinate first, then Y coordinate (as per appendix E)
+                // Compare Point1 lexicographically: X first, then Y (not Z for Line3D according to PDF)
                 if (a->getPt1().getX() != b->getPt1().getX()) {
                     return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
                                                     : a->getPt1().getX() > b->getPt1().getX();
                 }
+                // If X coordinates are equal, compare Y coordinates
                 return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
                                                 : a->getPt1().getY() > b->getPt1().getY();
             });
         }
         else if (currentSortCriteria == "Pt. 2") {
             sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
-                // Sort by Pt2's X coordinate first, then Y coordinate
+                // Compare Point2 lexicographically: X first, then Y
                 if (a->getPt2().getX() != b->getPt2().getX()) {
                     return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
                                                     : a->getPt2().getX() > b->getPt2().getX();
