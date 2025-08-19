@@ -388,8 +388,6 @@ public:
       cout << "Sorting order successfully set to '" << currentSortOrder << "'!" << endl;
   }
 
-// Add this method to your menuSystem class
-
 void viewData() {
     cout << "\n[ View data ... ]" << endl;
     cout << "filtering criteria : " << currentFilter << endl;
@@ -412,12 +410,12 @@ void viewData() {
         // Sort based on current criteria
         sortPoint2DData(sortedPoints);
 
-        // Display header with exact format from Appendix C
+        // Display header
         cout << "Point2D" << endl;
         cout << "   X      Y    Dist. Fr Origin" << endl;
         cout << "- - - - - - - - - - - - - - - -" << endl;
 
-        // Display data with exact format from Appendix C: 3 spaces between coordinates and Dist value
+        // Display data
         for (auto* point : sortedPoints) {
             cout << "[" << setw(4) << point->getX() << ", "
                  << setw(4) << point->getY() << "]   "
@@ -504,98 +502,90 @@ void viewData() {
     cout << "\nPress any key to go back to main menu ..." << endl;
 }
 
-    // Helper sorting functions
     void sortPoint2DData(vector<Point2D*>& points) {
-        if (currentSortCriteria == "x-ordinate") {
-            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
-                return currentSortOrder == "ASC" ? a->getX() < b->getX() : a->getX() > b->getX();
-            });
+    // We need to work with the original unique_ptr containers for template functions
+    // So we'll sort the original container and then rebuild the pointer vector
+
+    if (currentSortCriteria == "x-ordinate") {
+        if (currentSortOrder == "ASC") {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareXAsc<Point2D>);
+        } else {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareXDsc<Point2D>);
         }
-        else if (currentSortCriteria == "y-ordinate") {
-            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
-                return currentSortOrder == "ASC" ? a->getY() < b->getY() : a->getY() > b->getY();
-            });
+    }
+    else if (currentSortCriteria == "y-ordinate") {
+        if (currentSortOrder == "ASC") {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareYAsc<Point2D>);
+        } else {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareYDsc<Point2D>);
         }
-        else if (currentSortCriteria == "distFrOrigin") {
-            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
-                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
-                                                : a->getScalarValue() > b->getScalarValue();
-            });
+    }
+    else if (currentSortCriteria == "distFrOrigin") {
+        if (currentSortOrder == "ASC") {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareDistAsc<Point2D>);
+        } else {
+            sort(allPoints2D.begin(), allPoints2D.end(), compareDistDsc<Point2D>);
         }
+    }
+
+    // Rebuild the pointer vector to match the sorted order
+    points.clear();
+    for (auto& point : allPoints2D) {
+        points.push_back(point.get());
+    }
     }
 
     void sortPoint3DData(vector<Point3D*>& points) {
         if (currentSortCriteria == "x-ordinate") {
-            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
-                return currentSortOrder == "ASC" ? a->getX() < b->getX() : a->getX() > b->getX();
-            });
+            if (currentSortOrder == "ASC") {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareXAsc<Point3D>);
+            } else {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareXDsc<Point3D>);
+            }
         }
         else if (currentSortCriteria == "y-ordinate") {
-            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
-                return currentSortOrder == "ASC" ? a->getY() < b->getY() : a->getY() > b->getY();
-            });
+            if (currentSortOrder == "ASC") {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareYAsc<Point3D>);
+            } else {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareYDsc<Point3D>);
+            }
         }
         else if (currentSortCriteria == "z-ordinate") {
-            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
-                return currentSortOrder == "ASC" ? a->getZ() < b->getZ() : a->getZ() > b->getZ();
-            });
+            if (currentSortOrder == "ASC") {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareZAsc<Point3D>);
+            } else {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareZDsc<Point3D>);
+            }
         }
         else if (currentSortCriteria == "distFrOrigin") {
-            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
-                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
-                                                : a->getScalarValue() > b->getScalarValue();
-            });
+            if (currentSortOrder == "ASC") {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareDistAsc<Point3D>);
+            } else {
+                sort(allPoints3D.begin(), allPoints3D.end(), compareDistDsc<Point3D>);
+            }
+        }
+
+        // Rebuild the pointer vector to match the sorted order
+        points.clear();
+        for (auto& point : allPoints3D) {
+            points.push_back(point.get());
         }
     }
 
     void sortLine2DData(vector<Line2D*>& lines) {
-    if (currentSortCriteria == "Pt. 1") {
-        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-            // Compare Point1 lexicographically: X first, then Y
-            if (a->getPt1().getX() != b->getPt1().getX()) {
-                return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
-                                                : a->getPt1().getX() > b->getPt1().getX();
-            }
-            // If X coordinates are equal, compare Y coordinates
-            return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
-                                            : a->getPt1().getY() > b->getPt1().getY();
-        });
-    }
-    else if (currentSortCriteria == "Pt. 2") {
-        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-            // Compare Point2 lexicographically: X first, then Y
-            if (a->getPt2().getX() != b->getPt2().getX()) {
-                return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
-                                                : a->getPt2().getX() > b->getPt2().getX();
-            }
-            return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
-                                            : a->getPt2().getY() > b->getPt2().getY();
-        });
-    }
-    else if (currentSortCriteria == "Length") {
-        sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
-            return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
-                                            : a->getScalarValue() > b->getScalarValue();
-        });
-    }
-}
-
-    void sortLine3DData(vector<Line3D*>& lines) {
         if (currentSortCriteria == "Pt. 1") {
-            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
-                // Compare Point1 lexicographically: X first, then Y (not Z for Line3D according to PDF)
+            // For lexicographic sorting (X then Y), we need custom lambda since templates only sort by X
+            sort(allLines2D.begin(), allLines2D.end(), [this](const unique_ptr<Line2D>& a, const unique_ptr<Line2D>& b) {
                 if (a->getPt1().getX() != b->getPt1().getX()) {
                     return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
                                                     : a->getPt1().getX() > b->getPt1().getX();
                 }
-                // If X coordinates are equal, compare Y coordinates
                 return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
                                                 : a->getPt1().getY() > b->getPt1().getY();
             });
         }
         else if (currentSortCriteria == "Pt. 2") {
-            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
-                // Compare Point2 lexicographically: X first, then Y
+            sort(allLines2D.begin(), allLines2D.end(), [this](const unique_ptr<Line2D>& a, const unique_ptr<Line2D>& b) {
                 if (a->getPt2().getX() != b->getPt2().getX()) {
                     return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
                                                     : a->getPt2().getX() > b->getPt2().getX();
@@ -605,10 +595,54 @@ void viewData() {
             });
         }
         else if (currentSortCriteria == "Length") {
-            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
-                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
-                                                : a->getScalarValue() > b->getScalarValue();
+            if (currentSortOrder == "ASC") {
+                sort(allLines2D.begin(), allLines2D.end(), compareDistAsc<Line2D>);
+            } else {
+                sort(allLines2D.begin(), allLines2D.end(), compareDistDsc<Line2D>);
+            }
+        }
+
+        // Rebuild the pointer vector to match the sorted order
+        lines.clear();
+        for (auto& line : allLines2D) {
+            lines.push_back(line.get());
+        }
+    }
+
+    void sortLine3DData(vector<Line3D*>& lines) {
+        if (currentSortCriteria == "Pt. 1") {
+            // For lexicographic sorting (X then Y), we need custom lambda since templates only sort by X
+            sort(allLines3D.begin(), allLines3D.end(), [this](const unique_ptr<Line3D>& a, const unique_ptr<Line3D>& b) {
+                if (a->getPt1().getX() != b->getPt1().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
+                                                    : a->getPt1().getX() > b->getPt1().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
+                                                : a->getPt1().getY() > b->getPt1().getY();
             });
+        }
+        else if (currentSortCriteria == "Pt. 2") {
+            sort(allLines3D.begin(), allLines3D.end(), [this](const unique_ptr<Line3D>& a, const unique_ptr<Line3D>& b) {
+                if (a->getPt2().getX() != b->getPt2().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
+                                                    : a->getPt2().getX() > b->getPt2().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
+                                                : a->getPt2().getY() > b->getPt2().getY();
+            });
+        }
+        else if (currentSortCriteria == "Length") {
+            if (currentSortOrder == "ASC") {
+                sort(allLines3D.begin(), allLines3D.end(), compareDistAsc<Line3D>);
+            } else {
+                sort(allLines3D.begin(), allLines3D.end(), compareDistDsc<Line3D>);
+            }
+        }
+
+        // Rebuild the pointer vector to match the sorted order
+        lines.clear();
+        for (auto& line : allLines3D) {
+            lines.push_back(line.get());
         }
     }
 
@@ -641,7 +675,7 @@ void viewData() {
         // Sort based on current criteria
         sortPoint2DData(sortedPoints);
 
-        // Write header with exact format from Appendix C
+        // Write header
         file << "Point2D" << endl;
         file << "   X      Y    Dist. Fr Origin" << endl;
         file << "- - - - - - - - - - - - - - - -" << endl;
@@ -765,7 +799,7 @@ void viewData() {
   }
 };
 
-int main(){
-  menuSystem menu;
-  menu.run();
-}
+// int main(){
+//   menuSystem menu;
+//   menu.run();
+// }
