@@ -61,12 +61,8 @@ public:
       case 2:setFilteringCriteria(); return true;
       case 3:setSortingCriteria(); return true;
       case 4:setSortingOrder(); return true;
-      case 5:
-        //viewData();
-        return true;
-      case 6:
-        // storeData();
-        return true;
+      case 5:viewData(); return true;
+      case 6: storeData(); return true;
       case 7:
         cout << "Thank you for using program" << endl;
         // safelyDeallocateMemory();
@@ -360,6 +356,365 @@ public:
       currentSortOrder = newOrder;
       cout << "Sorting order successfully set to '" << currentSortOrder << "'!" << endl;
   }
+
+// Add this method to your menuSystem class
+
+void viewData() {
+    cout << "\n[ View data ... ]" << endl;
+    cout << "filtering criteria : " << currentFilter << endl;
+    cout << "sorting criteria : " << currentSortCriteria << endl;
+    cout << "sorting order : " << currentSortOrder << endl;
+    cout << endl;
+
+    if (currentFilter == "Point2D") {
+        if (allPoints2D.empty()) {
+            cout << "No Point2D records available. Please read in data first." << endl;
+            return;
+        }
+
+        // Create a copy for sorting without affecting original data
+        vector<Point2D*> sortedPoints;
+        for (auto& point : allPoints2D) {
+            sortedPoints.push_back(point.get());
+        }
+
+        // Sort based on current criteria
+        sortPoint2DData(sortedPoints);
+
+        // Display header
+        cout << "Point2D" << endl;
+        cout << "   X      Y    Dist. Fr Origin" << endl;
+        cout << "- - - - - - - - - - - - - - -" << endl;
+
+        // Display data
+        for (auto* point : sortedPoints) {
+            cout << setw(4) << point->getX() << "   "
+                 << setw(4) << point->getY() << "   "
+                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+        }
+    }
+    else if (currentFilter == "Point3D") {
+        if (allPoints3D.empty()) {
+            cout << "No Point3D records available. Please read in data first." << endl;
+            return;
+        }
+
+        vector<Point3D*> sortedPoints;
+        for (auto& point : allPoints3D) {
+            sortedPoints.push_back(point.get());
+        }
+
+        sortPoint3DData(sortedPoints);
+
+        cout << "Point3D" << endl;
+        cout << "   X      Y      Z    Dist. Fr Origin" << endl;
+        cout << "- - - - - - - - - - - - - - - - - - -" << endl;
+
+        for (auto* point : sortedPoints) {
+            cout << setw(4) << point->getX() << "   "
+                 << setw(4) << point->getY() << "   "
+                 << setw(4) << point->getZ() << "   "
+                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+        }
+    }
+    else if (currentFilter == "Line2D") {
+        if (allLines2D.empty()) {
+            cout << "No Line2D records available. Please read in data first." << endl;
+            return;
+        }
+
+        vector<Line2D*> sortedLines;
+        for (auto& line : allLines2D) {
+            sortedLines.push_back(line.get());
+        }
+
+        sortLine2DData(sortedLines);
+
+        cout << "Line2D" << endl;
+        cout << " P1-X  P1-Y   P2-X  P2-Y     Length" << endl;
+        cout << "- - - - - - - - - - - - - - - - - -" << endl;
+
+        for (auto* line : sortedLines) {
+            cout << setw(4) << line->getPt1().getX() << "  "
+                 << setw(4) << line->getPt1().getY() << "   "
+                 << setw(4) << line->getPt2().getX() << "  "
+                 << setw(4) << line->getPt2().getY() << "   "
+                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+        }
+    }
+    else if (currentFilter == "Line3D") {
+        if (allLines3D.empty()) {
+            cout << "No Line3D records available. Please read in data first." << endl;
+            return;
+        }
+
+        vector<Line3D*> sortedLines;
+        for (auto& line : allLines3D) {
+            sortedLines.push_back(line.get());
+        }
+
+        sortLine3DData(sortedLines);
+
+        cout << "Line3D" << endl;
+        cout << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z       Length" << endl;
+        cout << "- - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
+
+        for (auto* line : sortedLines) {
+            cout << setw(4) << line->getPt1().getX() << "  "
+                 << setw(4) << line->getPt1().getY() << "  "
+                 << setw(4) << line->getPt1().getZ() << "     "
+                 << setw(4) << line->getPt2().getX() << "  "
+                 << setw(4) << line->getPt2().getY() << "  "
+                 << setw(4) << line->getPt2().getZ() << "   "
+                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+        }
+    }
+
+    cout << "\nPress any key to go back to main menu ..." << endl;
+}
+
+    // Helper sorting functions
+    void sortPoint2DData(vector<Point2D*>& points) {
+        if (currentSortCriteria == "x-ordinate") {
+            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
+                return currentSortOrder == "ASC" ? a->getX() < b->getX() : a->getX() > b->getX();
+            });
+        }
+        else if (currentSortCriteria == "y-ordinate") {
+            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
+                return currentSortOrder == "ASC" ? a->getY() < b->getY() : a->getY() > b->getY();
+            });
+        }
+        else if (currentSortCriteria == "distFrOrigin") {
+            sort(points.begin(), points.end(), [this](Point2D* a, Point2D* b) {
+                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
+                                                : a->getScalarValue() > b->getScalarValue();
+            });
+        }
+    }
+
+    void sortPoint3DData(vector<Point3D*>& points) {
+        if (currentSortCriteria == "x-ordinate") {
+            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
+                return currentSortOrder == "ASC" ? a->getX() < b->getX() : a->getX() > b->getX();
+            });
+        }
+        else if (currentSortCriteria == "y-ordinate") {
+            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
+                return currentSortOrder == "ASC" ? a->getY() < b->getY() : a->getY() > b->getY();
+            });
+        }
+        else if (currentSortCriteria == "z-ordinate") {
+            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
+                return currentSortOrder == "ASC" ? a->getZ() < b->getZ() : a->getZ() > b->getZ();
+            });
+        }
+        else if (currentSortCriteria == "distFrOrigin") {
+            sort(points.begin(), points.end(), [this](Point3D* a, Point3D* b) {
+                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
+                                                : a->getScalarValue() > b->getScalarValue();
+            });
+        }
+    }
+
+    void sortLine2DData(vector<Line2D*>& lines) {
+        if (currentSortCriteria == "Pt. 1") {
+            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+                // Sort by Pt1's X coordinate first, then Y coordinate
+                if (a->getPt1().getX() != b->getPt1().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
+                                                    : a->getPt1().getX() > b->getPt1().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
+                                                : a->getPt1().getY() > b->getPt1().getY();
+            });
+        }
+        else if (currentSortCriteria == "Pt. 2") {
+            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+                // Sort by Pt2's X coordinate first, then Y coordinate
+                if (a->getPt2().getX() != b->getPt2().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
+                                                    : a->getPt2().getX() > b->getPt2().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
+                                                : a->getPt2().getY() > b->getPt2().getY();
+            });
+        }
+        else if (currentSortCriteria == "Length") {
+            sort(lines.begin(), lines.end(), [this](Line2D* a, Line2D* b) {
+                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
+                                                : a->getScalarValue() > b->getScalarValue();
+            });
+        }
+    }
+
+    void sortLine3DData(vector<Line3D*>& lines) {
+        if (currentSortCriteria == "Pt. 1") {
+            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
+                // Sort by Pt1's X coordinate first, then Y coordinate (as per appendix E)
+                if (a->getPt1().getX() != b->getPt1().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt1().getX() < b->getPt1().getX()
+                                                    : a->getPt1().getX() > b->getPt1().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt1().getY() < b->getPt1().getY()
+                                                : a->getPt1().getY() > b->getPt1().getY();
+            });
+        }
+        else if (currentSortCriteria == "Pt. 2") {
+            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
+                // Sort by Pt2's X coordinate first, then Y coordinate
+                if (a->getPt2().getX() != b->getPt2().getX()) {
+                    return currentSortOrder == "ASC" ? a->getPt2().getX() < b->getPt2().getX()
+                                                    : a->getPt2().getX() > b->getPt2().getX();
+                }
+                return currentSortOrder == "ASC" ? a->getPt2().getY() < b->getPt2().getY()
+                                                : a->getPt2().getY() > b->getPt2().getY();
+            });
+        }
+        else if (currentSortCriteria == "Length") {
+            sort(lines.begin(), lines.end(), [this](Line3D* a, Line3D* b) {
+                return currentSortOrder == "ASC" ? a->getScalarValue() < b->getScalarValue()
+                                                : a->getScalarValue() > b->getScalarValue();
+            });
+        }
+    }
+
+    void storeData() {
+    string fileName;
+    cout << "\nPlease enter filename : ";
+    cin >> fileName;
+
+    ofstream file(fileName);
+    if (!file.is_open()) {
+        cout << "Error: Could not create file '" << fileName << "'" << endl;
+        return;
+    }
+
+    int recordsWritten = 0;
+
+    if (currentFilter == "Point2D") {
+        if (allPoints2D.empty()) {
+            cout << "No Point2D records available to store." << endl;
+            file.close();
+            return;
+        }
+
+        // Create a copy for sorting without affecting original data
+        vector<Point2D*> sortedPoints;
+        for (auto& point : allPoints2D) {
+            sortedPoints.push_back(point.get());
+        }
+
+        // Sort based on current criteria
+        sortPoint2DData(sortedPoints);
+
+        // Write header
+        file << "Point2D" << endl;
+        file << "   X      Y    Dist. Fr Origin" << endl;
+        file << "- - - - - - - - - - - - - - -" << endl;
+
+        // Write data
+        for (auto* point : sortedPoints) {
+            file << setw(4) << point->getX() << "   "
+                 << setw(4) << point->getY() << "   "
+                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            recordsWritten++;
+        }
+    }
+    else if (currentFilter == "Point3D") {
+        if (allPoints3D.empty()) {
+            cout << "No Point3D records available to store." << endl;
+            file.close();
+            return;
+        }
+
+        vector<Point3D*> sortedPoints;
+        for (auto& point : allPoints3D) {
+            sortedPoints.push_back(point.get());
+        }
+
+        sortPoint3DData(sortedPoints);
+
+        // Write header
+        file << "Point3D" << endl;
+        file << "   X      Y      Z    Dist. Fr Origin" << endl;
+        file << "- - - - - - - - - - - - - - - - - - -" << endl;
+
+        // Write data
+        for (auto* point : sortedPoints) {
+            file << setw(4) << point->getX() << "   "
+                 << setw(4) << point->getY() << "   "
+                 << setw(4) << point->getZ() << "   "
+                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            recordsWritten++;
+        }
+    }
+    else if (currentFilter == "Line2D") {
+        if (allLines2D.empty()) {
+            cout << "No Line2D records available to store." << endl;
+            file.close();
+            return;
+        }
+
+        vector<Line2D*> sortedLines;
+        for (auto& line : allLines2D) {
+            sortedLines.push_back(line.get());
+        }
+
+        sortLine2DData(sortedLines);
+
+        // Write header
+        file << "Line2D" << endl;
+        file << " P1-X  P1-Y   P2-X  P2-Y     Length" << endl;
+        file << "- - - - - - - - - - - - - - - - - -" << endl;
+
+        // Write data
+        for (auto* line : sortedLines) {
+            file << setw(4) << line->getPt1().getX() << "  "
+                 << setw(4) << line->getPt1().getY() << "   "
+                 << setw(4) << line->getPt2().getX() << "  "
+                 << setw(4) << line->getPt2().getY() << "   "
+                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            recordsWritten++;
+        }
+    }
+    else if (currentFilter == "Line3D") {
+        if (allLines3D.empty()) {
+            cout << "No Line3D records available to store." << endl;
+            file.close();
+            return;
+        }
+
+        vector<Line3D*> sortedLines;
+        for (auto& line : allLines3D) {
+            sortedLines.push_back(line.get());
+        }
+
+        sortLine3DData(sortedLines);
+
+        // Write header
+        file << "Line3D" << endl;
+        file << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z       Length" << endl;
+        file << "- - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
+
+        // Write data
+        for (auto* line : sortedLines) {
+            file << setw(4) << line->getPt1().getX() << "  "
+                 << setw(4) << line->getPt1().getY() << "  "
+                 << setw(4) << line->getPt1().getZ() << "     "
+                 << setw(4) << line->getPt2().getX() << "  "
+                 << setw(4) << line->getPt2().getY() << "  "
+                 << setw(4) << line->getPt2().getZ() << "   "
+                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            recordsWritten++;
+        }
+    }
+
+    file.close();
+
+    cout << recordsWritten << " records output successfully!" << endl;
+    cout << "\nGoing back to main menu ..." << endl;
+}
 
   void run() {
     bool continueRunning = true;
