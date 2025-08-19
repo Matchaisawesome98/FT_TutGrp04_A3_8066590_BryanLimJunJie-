@@ -380,11 +380,4 @@ public:
 int main(){
   menuSystem menu;
   menu.run();
-  // Point2D p1(3, 2);
-  // Point2D p2(5, 2);
-  //
-  // cout << "Point 1: (" << p1.getX() << ", " << p1.getY() << ")" << endl;
-  // cout << "Point 2: (" << p2.getX() << ", " << p2.getY() << ")" << endl;
-  //
-  // return 0;
 }
