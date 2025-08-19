@@ -799,7 +799,7 @@ void viewData() {
   }
 };
 
-// int main(){
-//   menuSystem menu;
-//   menu.run();
-// }
+int main(){
+  menuSystem menu;
+  menu.run();
+}
