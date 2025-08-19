@@ -210,19 +210,6 @@ public:
         allPoints3D.erase(newEnd3D, allPoints3D.end());
     }
 
-  // void viewData() {
-  //   if (points2D.empty()) {
-  //     cout << "No data available. Please read in data first." << endl;
-  //     return;
-  //   }
-  //
-  //   cout << "\nDisplaying " << points2D.size() << " Point2D records:" << endl;
-  //   cout << "===============================================" << endl;
-  //   for (size_t i = 0; i < points2D.size(); i++) {
-  //     cout << "[" << (i + 1) << "] " << points2D[i] << endl;
-  //   }
-  // }
-
     void setFilteringCriteria() {
       cout << "\n[ Specifying filtering criteria (current : " << currentFilter << ") ]" << endl;
       cout << "\na)\tPoint2D records" << endl;
@@ -381,16 +368,16 @@ void viewData() {
         // Sort based on current criteria
         sortPoint2DData(sortedPoints);
 
-        // Display header
+        // Display header with exact format from Appendix C
         cout << "Point2D" << endl;
         cout << "   X      Y    Dist. Fr Origin" << endl;
-        cout << "- - - - - - - - - - - - - - -" << endl;
+        cout << "- - - - - - - - - - - - - - - -" << endl;
 
-        // Display data
+        // Display data with exact format from Appendix C: 3 spaces between coordinates and Dist value
         for (auto* point : sortedPoints) {
-            cout << setw(4) << point->getX() << "   "
-                 << setw(4) << point->getY() << "   "
-                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            cout << "[" << setw(4) << point->getX() << ", "
+                 << setw(4) << point->getY() << "]   "
+                 << fixed << setprecision(3) << point->getScalarValue() << endl;
         }
     }
     else if (currentFilter == "Point3D") {
@@ -411,10 +398,10 @@ void viewData() {
         cout << "- - - - - - - - - - - - - - - - - - -" << endl;
 
         for (auto* point : sortedPoints) {
-            cout << setw(4) << point->getX() << "   "
-                 << setw(4) << point->getY() << "   "
-                 << setw(4) << point->getZ() << "   "
-                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            cout << "[" << setw(4) << point->getX() << ", "
+                 << setw(4) << point->getY() << ", "
+                 << setw(4) << point->getZ() << "]   "
+                 << fixed << setprecision(3) << point->getScalarValue() << endl;
         }
     }
     else if (currentFilter == "Line2D") {
@@ -431,15 +418,15 @@ void viewData() {
         sortLine2DData(sortedLines);
 
         cout << "Line2D" << endl;
-        cout << " P1-X  P1-Y   P2-X  P2-Y     Length" << endl;
+        cout << " P1-X  P1-Y      P2-X  P2-Y   Length" << endl;
         cout << "- - - - - - - - - - - - - - - - - -" << endl;
 
         for (auto* line : sortedLines) {
-            cout << setw(4) << line->getPt1().getX() << "  "
-                 << setw(4) << line->getPt1().getY() << "   "
-                 << setw(4) << line->getPt2().getX() << "  "
-                 << setw(4) << line->getPt2().getY() << "   "
-                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            cout << "[" << setw(4) << line->getPt1().getX() << ", "
+                 << setw(4) << line->getPt1().getY() << "]   "
+                 << "[" << setw(4) << line->getPt2().getX() << ", "
+                 << setw(4) << line->getPt2().getY() << "]   "
+                 << fixed << setprecision(3) << line->getScalarValue() << endl;
         }
     }
     else if (currentFilter == "Line3D") {
@@ -456,17 +443,17 @@ void viewData() {
         sortLine3DData(sortedLines);
 
         cout << "Line3D" << endl;
-        cout << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z       Length" << endl;
+        cout << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z    Length" << endl;
         cout << "- - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
 
         for (auto* line : sortedLines) {
-            cout << setw(4) << line->getPt1().getX() << "  "
-                 << setw(4) << line->getPt1().getY() << "  "
-                 << setw(4) << line->getPt1().getZ() << "     "
-                 << setw(4) << line->getPt2().getX() << "  "
-                 << setw(4) << line->getPt2().getY() << "  "
-                 << setw(4) << line->getPt2().getZ() << "   "
-                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            cout << "[" << setw(4) << line->getPt1().getX() << ", "
+                 << setw(4) << line->getPt1().getY() << ", "
+                 << setw(4) << line->getPt1().getZ() << "]   "
+                 << "[" << setw(4) << line->getPt2().getX() << ", "
+                 << setw(4) << line->getPt2().getY() << ", "
+                 << setw(4) << line->getPt2().getZ() << "]   "
+                 << fixed << setprecision(3) << line->getScalarValue() << endl;
         }
     }
 
@@ -608,16 +595,16 @@ void viewData() {
         // Sort based on current criteria
         sortPoint2DData(sortedPoints);
 
-        // Write header
+        // Write header with exact format from Appendix C
         file << "Point2D" << endl;
         file << "   X      Y    Dist. Fr Origin" << endl;
-        file << "- - - - - - - - - - - - - - -" << endl;
+        file << "- - - - - - - - - - - - - - - -" << endl;
 
-        // Write data
+        // Write data with exact format: [  value,   value]   value
         for (auto* point : sortedPoints) {
-            file << setw(4) << point->getX() << "   "
-                 << setw(4) << point->getY() << "   "
-                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            file << "[" << setw(4) << point->getX() << ", "
+                 << setw(4) << point->getY() << "]   "
+                 << fixed << setprecision(3) << point->getScalarValue() << endl;
             recordsWritten++;
         }
     }
@@ -642,10 +629,10 @@ void viewData() {
 
         // Write data
         for (auto* point : sortedPoints) {
-            file << setw(4) << point->getX() << "   "
-                 << setw(4) << point->getY() << "   "
-                 << setw(4) << point->getZ() << "   "
-                 << setw(3) << fixed << setprecision(3) << point->getScalarValue() << endl;
+            file << "[" << setw(4) << point->getX() << ", "
+                 << setw(4) << point->getY() << ", "
+                 << setw(4) << point->getZ() << "]   "
+                 << fixed << setprecision(3) << point->getScalarValue() << endl;
             recordsWritten++;
         }
     }
@@ -665,16 +652,16 @@ void viewData() {
 
         // Write header
         file << "Line2D" << endl;
-        file << " P1-X  P1-Y   P2-X  P2-Y     Length" << endl;
+        file << " P1-X  P1-Y      P2-X  P2-Y   Length" << endl;
         file << "- - - - - - - - - - - - - - - - - -" << endl;
 
         // Write data
         for (auto* line : sortedLines) {
-            file << setw(4) << line->getPt1().getX() << "  "
-                 << setw(4) << line->getPt1().getY() << "   "
-                 << setw(4) << line->getPt2().getX() << "  "
-                 << setw(4) << line->getPt2().getY() << "   "
-                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            file << "[" << setw(4) << line->getPt1().getX() << ", "
+                 << setw(4) << line->getPt1().getY() << "]   "
+                 << "[" << setw(4) << line->getPt2().getX() << ", "
+                 << setw(4) << line->getPt2().getY() << "]   "
+                 << fixed << setprecision(3) << line->getScalarValue() << endl;
             recordsWritten++;
         }
     }
@@ -694,18 +681,18 @@ void viewData() {
 
         // Write header
         file << "Line3D" << endl;
-        file << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z       Length" << endl;
+        file << " P1-X  P1-Y  P1-Z     P2-X  P2-Y  P2-Z    Length" << endl;
         file << "- - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
 
         // Write data
         for (auto* line : sortedLines) {
-            file << setw(4) << line->getPt1().getX() << "  "
-                 << setw(4) << line->getPt1().getY() << "  "
-                 << setw(4) << line->getPt1().getZ() << "     "
-                 << setw(4) << line->getPt2().getX() << "  "
-                 << setw(4) << line->getPt2().getY() << "  "
-                 << setw(4) << line->getPt2().getZ() << "   "
-                 << setw(3) << fixed << setprecision(3) << line->getScalarValue() << endl;
+            file << "[" << setw(4) << line->getPt1().getX() << ", "
+                 << setw(4) << line->getPt1().getY() << ", "
+                 << setw(4) << line->getPt1().getZ() << "]   "
+                 << "[" << setw(4) << line->getPt2().getX() << ", "
+                 << setw(4) << line->getPt2().getY() << ", "
+                 << setw(4) << line->getPt2().getZ() << "]   "
+                 << fixed << setprecision(3) << line->getScalarValue() << endl;
             recordsWritten++;
         }
     }
