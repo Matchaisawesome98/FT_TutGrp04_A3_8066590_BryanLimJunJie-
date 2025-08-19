@@ -1,0 +1,4 @@
+Point2D, [3, 2]
+Point2D, [3, 2]
+Point2D, [5, 2]
+Point2D, [3, 1]
