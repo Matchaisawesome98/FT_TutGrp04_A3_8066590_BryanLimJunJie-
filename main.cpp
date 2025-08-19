@@ -39,9 +39,9 @@ public:
   cout << "-------------------------------" << endl;
   cout << "Welcome to Assignment 3 program!" << endl;
   cout << "\n1)\tRead in data" << endl;
-  cout << "2) Specify filtering criteria (current : " << currentFilter << ")" << endl;
-  cout << "3) Specify sorting criteria (current : " << currentSortCriteria << ")" << endl;
-  cout << "4) Specify sorting order (current : " << currentSortOrder << ")" << endl;
+  cout << "2) \tSpecify filtering criteria (current : " << currentFilter << ")" << endl;
+  cout << "3) \tSpecify sorting criteria (current : " << currentSortCriteria << ")" << endl;
+  cout << "4) \tSpecify sorting order (current : " << currentSortOrder << ")" << endl;
   cout << "5)\tView data" << endl;
   cout << "6)\tStore data" << endl;
   cout << "7)\tExit program" << endl;
@@ -58,14 +58,9 @@ public:
   bool processMenuChoice(int choice) {
     switch (choice) {
       case 1: readData(); return true;
-      case 2:// setFilteringCriteria();
-        return true;
-      case 3:
-        // setSortingCriteria();
-        return true;
-      case 4:
-        // setSortingOrder();
-        return true;
+      case 2:setFilteringCriteria(); return true;
+      case 3:setSortingCriteria(); return true;
+      case 4:setSortingOrder(); return true;
       case 5:
         //viewData();
         return true;
@@ -231,6 +226,140 @@ public:
   //     cout << "[" << (i + 1) << "] " << points2D[i] << endl;
   //   }
   // }
+
+    void setFilteringCriteria() {
+      cout << "\n[ Specifying filtering criteria (current : " << currentFilter << ") ]" << endl;
+      cout << "\na)\tPoint2D records" << endl;
+      cout << "b)\tPoint3D records" << endl;
+      cout << "c)\tLine2D records" << endl;
+      cout << "d)\tLine3D records" << endl;
+      cout << "\nPlease enter your criteria (a - d) : ";
+
+      char choice;
+      cin >> choice;
+
+      string newFilter;
+      switch(choice) {
+          case 'a':
+          case 'A':
+              newFilter = "Point2D";
+              break;
+          case 'b':
+          case 'B':
+              newFilter = "Point3D";
+              break;
+          case 'c':
+          case 'C':
+              newFilter = "Line2D";
+              break;
+          case 'd':
+          case 'D':
+              newFilter = "Line3D";
+              break;
+          default:
+              cout << "Invalid choice! Please enter a, b, c, or d." << endl;
+              return;
+      }
+
+      currentFilter = newFilter;
+      cout << "Filter criteria successfully set to '" << currentFilter << "'!" << endl;
+
+      // Reset sorting criteria to default for the new filter type
+      // resetSortingCriteriaForFilter();
+  }
+
+    void setSortingCriteria() {
+        cout << "\n[ Specifying sorting criteria (current : " << currentSortCriteria << ") ]" << endl;
+
+        if (currentFilter == "Point2D") {
+            cout << "\na)\tX ordinate value\t(default)" << endl;
+            cout << "b)\tY ordinate value" << endl;
+            cout << "c)\tDist. Fr Origin value" << endl;
+        }
+        else if (currentFilter == "Point3D") {
+            cout << "\na)\tX ordinate value\t(default)" << endl;
+            cout << "b)\tY ordinate value" << endl;
+            cout << "c)\tZ ordinate value" << endl;
+            cout << "d)\tDist. Fr Origin value" << endl;
+        }
+        else if (currentFilter == "Line2D") {
+            cout << "\na)\tPt. 1's (x, y) values\t(default)" << endl;
+            cout << "b)\tPt. 2's (x, y) values" << endl;
+            cout << "c)\tLength value" << endl;
+        }
+        else if (currentFilter == "Line3D") {
+            cout << "\na)\tPt. 1's (x, y) values\t(default)" << endl;
+            cout << "b)\tPt. 2's (x, y) values" << endl;
+            cout << "c)\tLength value" << endl;
+        }
+
+        cout << "\nPlease enter your criteria (a - c) : ";
+
+        char choice;
+        cin >> choice;
+
+        string newCriteria;
+        if (currentFilter == "Point2D") {
+            switch(choice) {
+                case 'a': case 'A': newCriteria = "x-ordinate"; break;
+                case 'b': case 'B': newCriteria = "y-ordinate"; break;
+                case 'c': case 'C': newCriteria = "distFrOrigin"; break;
+                default:
+                    cout << "Invalid choice!" << endl;
+                    return;
+            }
+        }
+        else if (currentFilter == "Point3D") {
+            switch(choice) {
+                case 'a': case 'A': newCriteria = "x-ordinate"; break;
+                case 'b': case 'B': newCriteria = "y-ordinate"; break;
+                case 'c': case 'C': newCriteria = "z-ordinate"; break;
+                case 'd': case 'D': newCriteria = "distFrOrigin"; break;
+                default:
+                    cout << "Invalid choice!" << endl;
+                    return;
+            }
+        }
+        else if (currentFilter == "Line2D" || currentFilter == "Line3D") {
+            switch(choice) {
+                case 'a': case 'A': newCriteria = "Pt. 1"; break;
+                case 'b': case 'B': newCriteria = "Pt. 2"; break;
+                case 'c': case 'C': newCriteria = "Length"; break;
+                default:
+                    cout << "Invalid choice!" << endl;
+                    return;
+            }
+        }
+
+        currentSortCriteria = newCriteria;
+        cout << "Sorting criteria successfully set to '" << currentSortCriteria << "'!" << endl;
+    }
+
+    void setSortingOrder() {
+      cout << "\n[ Specifying sorting order (current : " << currentSortOrder << ") ]" << endl;
+      cout << "\na)\tASC (Ascending order)" << endl;
+      cout << "b)\tDSC (Descending order)" << endl;
+      cout << "\nPlease enter your criteria (a - b) : ";
+
+      char choice;
+      cin >> choice;
+
+      string newOrder;
+      switch(choice) {
+          case 'a': case 'A':
+              newOrder = "ASC";
+              break;
+          case 'b': case 'B':
+              newOrder = "DSC";
+              break;
+          default:
+              cout << "Invalid choice!" << endl;
+              return;
+      }
+
+      currentSortOrder = newOrder;
+      cout << "Sorting order successfully set to '" << currentSortOrder << "'!" << endl;
+  }
 
   void run() {
     bool continueRunning = true;
