@@ -9,7 +9,7 @@
 // Template function for scalar difference
 template<typename T>
 double scalar_difference(T obj1, T obj2) {
-    return abs(obj1.getScalarValue() - obj2.getScalarValue());
+    return std::abs(obj1.getScalarValue() - obj2.getScalarValue());
 }
 
 // Template function for equals comparison
