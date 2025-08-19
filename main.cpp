@@ -680,7 +680,7 @@ void viewData() {
         file << "   X      Y    Dist. Fr Origin" << endl;
         file << "- - - - - - - - - - - - - - - -" << endl;
 
-        // Write data with exact format: [  value,   value]   value
+        // Write data
         for (auto* point : sortedPoints) {
             file << "[" << setw(4) << point->getX() << ", "
                  << setw(4) << point->getY() << "]   "
